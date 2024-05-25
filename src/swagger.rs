@@ -6,8 +6,8 @@ use hyper::{HeaderMap, StatusCode};
 pub fn route_swagger() -> ApiRouter {
     let mut api = ApiRouter::new();
 
-    api = api.api_route("/api.json", get(serve_api));
-    api = api.api_route("/swagger", get(swagger_ui_page));
+    api = api.route("/api.json", get(serve_api));
+    api = api.route("/swagger", get(swagger_ui_page));
 
     api
 }
