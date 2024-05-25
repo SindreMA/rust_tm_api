@@ -1,0 +1,9 @@
+[package]
+name = "tm_api"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rocket = "0.5.0-rc.2"
+rocket_okapi = "0.8.0"
+schemars = "0.8.7"
