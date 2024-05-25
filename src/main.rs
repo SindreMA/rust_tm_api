@@ -1,10 +1,9 @@
 use aide::{
-    axum::{
-        routing::get,
-        ApiRouter,
-    },
+    axum::ApiRouter,
     openapi::{Contact, Info, OpenApi},
 };
+use tower_http::services::ServeDir;
+
 
 use axum::Extension;
 
@@ -13,13 +12,10 @@ mod endpoints;
 
 #[tokio::main]
 async fn main() {
-
-    let doc_url = "/api.json";
-
     let app =  ApiRouter::new()
-    .route(doc_url, get(swagger::serve_api))
-    .route("/swagger", get(swagger::swagger_ui_page))
-    .merge(endpoints::config::create_endpoints());
+    .merge(swagger::route_swagger())
+    .merge(endpoints::config::create_endpoints())
+    .nest_service("/statics", ServeDir::new("src/statics"));
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
 
@@ -38,9 +34,7 @@ async fn main() {
     axum::serve(
         listener,
         app
-            // Generate the documentation.
             .finish_api(&mut api)
-            // Expose the documentation to the handlers.
             .layer(Extension(api))
             .into_make_service(),
     )
